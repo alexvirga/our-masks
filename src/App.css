@@ -28,6 +28,29 @@
   color: #61dafb;
 }
 
+.Mask-Container{
+  display: inline-flex;
+  width: 100vw;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+}
+
+.MaskCard{
+  margin: 20px;
+  height: fit-content
+
+}
+
+.UploadForm{
+  
+}
+
+
+
+
+
+
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
