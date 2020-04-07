@@ -51,6 +51,7 @@ class Upload extends Component {
         console.log(err);
       },
       () => {
+        this.props.showForm()
         // gets the functions from storage refences the image storage in firebase by the children
         // gets the download url then sets the image from firebase as the value for the imgUrl key:
         storage
@@ -59,10 +60,10 @@ class Upload extends Component {
           .getDownloadURL()
           .then((fireBaseUrl) => {
             this.postImageData(fireBaseUrl);
-
             this.setState({
                 imageAsUrl: fireBaseUrl,
             });
+           
           });
       }
     );
