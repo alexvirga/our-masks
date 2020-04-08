@@ -3,12 +3,10 @@ import Upload from "../Components/Upload";
 
 class Navbar extends Component{
     state = {
-        visible: false
+        
     }
 
-    showForm = () => {
-        this.setState({visible: !this.state.visible})
-    }
+
 
     render(){
 
@@ -19,10 +17,7 @@ class Navbar extends Component{
   <br/>
   <p> As a result, those without medical masks began crafting masks of their own. From old shirts, cloth totes, or whatever you may find in your home, each mask is unique. </p>
   
-  <button onClick={() => this.showForm()}> Upload </button>
-  <div style={{display: this.state.visible ? "flex" : "none"}}>
-      <Upload showForm={this.showForm}/>
-  </div>
+ 
             </div>
           
         )

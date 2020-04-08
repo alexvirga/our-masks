@@ -12,9 +12,12 @@ class Upload extends Component {
   };
 
   handleImageAsFile = (e) => {
+      console.log(e.target)
+      if (e.target.files[0]) {
     const image = e.target.files[0];
     const previewUrl = URL.createObjectURL(image);
-    this.setState({ imagePreview: previewUrl, imageAsFile: image });
+    this.setState({ imagePreview: previewUrl, imageAsFile: image })}
+    else this.setState({imagePreview: ""});
   };
 
   handleDescription = (e) => {
@@ -24,17 +27,18 @@ class Upload extends Component {
   postImageData = (url) => {
     console.log(this.state.imageAsUrl);
     firebase.firestore().collection("Masks").add({
-      Image: url,
-      Comment: this.state.comment,
-      Location: this.state.location,
-    });
+      image: url,
+      comment: this.state.comment,
+      location: this.state.location,
+      timestamp: Date.now()
+    })
   };
 
   handleFireBaseUpload = (e) => {
     e.preventDefault();
     if (this.state.imageAsFile === "") {
       console.error(
-        `not an image, the image file is a ${typeof this.state.imageAsFile}`
+        `Please upload a valid photo`
       );
     }
     const uploadTask = storage
@@ -73,7 +77,7 @@ class Upload extends Component {
     return (
       <div className="UploadForm">
         <form onSubmit={this.handleFireBaseUpload}>
-          <input type="file" name="image" onChange={this.handleImageAsFile} />
+          <input type="file" name="image" accept="image/*" onChange={this.handleImageAsFile} required/>
           <br />
           <label>
             Location:
@@ -81,6 +85,8 @@ class Upload extends Component {
               type="text"
               name="location"
               onChange={this.handleDescription}
+              maxlength="50"
+              required
             />
           </label>
           <br />
@@ -90,6 +96,7 @@ class Upload extends Component {
               type="text"
               name="comment"
               onChange={this.handleDescription}
+              maxlength="140"
             />
           </label>
           <br />
