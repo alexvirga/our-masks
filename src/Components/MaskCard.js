@@ -9,11 +9,11 @@ class MaskCard extends Component {
   
 
         <img
-          src={this.props.mask.Image}
+          src={this.props.mask.image}
           style={{ maxWidth: "200px", height: "auto" }}
         />
-        <h3> {this.props.mask.Location} </h3>
-        <p> {this.props.mask.Comment} </p>
+        <h3> {this.props.mask.location} </h3>
+        <p> {this.props.mask.comment} </p>
       </div>
     );
   }
