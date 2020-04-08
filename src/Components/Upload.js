@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import { storage } from "../firebase/firebase";
-import firebase, { firestore } from "firebase";
+import { storage, firestore } from "../firebase/firebase";
+import { Form ,Button} from "semantic-ui-react";
 
 class Upload extends Component {
   state = {
@@ -11,13 +11,14 @@ class Upload extends Component {
     comment: "",
   };
 
+  fileInputRef = React.createRef();
+
   handleImageAsFile = (e) => {
-      console.log(e.target)
-      if (e.target.files[0]) {
-    const image = e.target.files[0];
-    const previewUrl = URL.createObjectURL(image);
-    this.setState({ imagePreview: previewUrl, imageAsFile: image })}
-    else this.setState({imagePreview: ""});
+    if (e.target.files[0]) {
+      const image = e.target.files[0];
+      const previewUrl = URL.createObjectURL(image);
+      this.setState({ imagePreview: previewUrl, imageAsFile: image });
+    } else this.setState({ imagePreview: "" });
   };
 
   handleDescription = (e) => {
@@ -25,21 +26,19 @@ class Upload extends Component {
   };
 
   postImageData = (url) => {
-    console.log(this.state.imageAsUrl);
-    firebase.firestore().collection("Masks").add({
+    this.props.showForm();
+    firestore.collection("Masks").add({
       image: url,
       comment: this.state.comment,
       location: this.state.location,
-      timestamp: Date.now()
-    })
+      timestamp: Date.now(),
+    });
   };
 
   handleFireBaseUpload = (e) => {
     e.preventDefault();
     if (this.state.imageAsFile === "") {
-      console.error(
-        `Please upload a valid photo`
-      );
+      console.error(`Please upload a valid photo`);
     }
     const uploadTask = storage
       .ref(`/images/${this.state.imageAsFile.name}`)
@@ -55,7 +54,6 @@ class Upload extends Component {
         console.log(err);
       },
       () => {
-        this.props.showForm()
         // gets the functions from storage refences the image storage in firebase by the children
         // gets the download url then sets the image from firebase as the value for the imgUrl key:
         storage
@@ -65,9 +63,8 @@ class Upload extends Component {
           .then((fireBaseUrl) => {
             this.postImageData(fireBaseUrl);
             this.setState({
-                imageAsUrl: fireBaseUrl,
+              imageAsUrl: fireBaseUrl,
             });
-           
           });
       }
     );
@@ -75,38 +72,57 @@ class Upload extends Component {
 
   render() {
     return (
-      <div className="UploadForm">
-        <form onSubmit={this.handleFireBaseUpload}>
-          <input type="file" name="image" accept="image/*" onChange={this.handleImageAsFile} required/>
-          <br />
-          <label>
-            Location:
+      <div className="Upload-form-div">
+        <Form className="Upload-form" onSubmit={this.handleFireBaseUpload}>
+
+        <Form.Field>
+            <Button
+              content="Choose File"
+              labelPosition="left"
+              icon="file"
+              onClick={() => this.fileInputRef.current.click()}
+           
+            />
             <input
-              type="text"
-              name="location"
-              onChange={this.handleDescription}
-              maxlength="50"
+              ref={this.fileInputRef}
+              name="image"
+              accept="image/*"
+              type="file"
+              hidden
+              onChange={this.handleImageAsFile}
               required
             />
-          </label>
-          <br />
-          <label>
-            Comment:
-            <input
-              type="text"
-              name="comment"
-              onChange={this.handleDescription}
-              maxlength="140"
-            />
-          </label>
+          </Form.Field>
+
           <br />
 
-          <button>Upload</button>
-        </form>
+          <Form.Input
+            label="Location"
+            placeholder="Location"
+            name="location"
+            onChange={this.handleDescription}
+            maxlength="50"
+            width={6}
+            required
+          />
+
+
+
+          <br />
+          <Form.TextArea
+            label="Comment"
+            name="comment"
+            placeholder="Tell us about more."
+            onChange={this.handleDescription}
+          />
+
+          <Button>Upload</Button>
+        </Form>
         <div className="Upload-Preview">
           <img
             src={this.state.imagePreview}
             style={{ maxWidth: "200px", height: "auto" }}
+            alt=""
           />
         </div>
       </div>

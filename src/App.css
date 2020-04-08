@@ -24,6 +24,14 @@
   color: white;
 }
 
+.Home-header {
+  background-color: rgb(239, 247, 247);
+  padding-bottom: 20px;
+}
+
+.Header-message{
+  padding: 40px
+}
 .App-link {
   color: #61dafb;
 }
@@ -33,12 +41,30 @@
   width: 100vw;
   flex-wrap: wrap;
   justify-content: space-evenly;
+  align-items: flex-end;
 }
 
 .MaskCard{
   margin: 20px;
-  height: fit-content
+  height: fit-content;
 
+
+}
+
+.Upload-form-container {
+  justify-content: center;
+  margin-top: 30px
+}
+
+.Upload-form-div {
+  margin: 20px
+
+}
+
+.Upload-form {
+  display: flex;
+    flex-direction: column;
+    text-align: left;
 }
 
 
