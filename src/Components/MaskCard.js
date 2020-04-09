@@ -6,7 +6,7 @@ import { firestore } from "../firebase/firebase";
 
 class MaskCard extends Component {
   state = {
-    display: "flex"
+    display: "block"
   }
 
 deleteCard = (e) => {
@@ -22,20 +22,19 @@ deleteCard = (e) => {
     
     return (
       <div className="MaskCard" style={{display: this.state.display}}>
-       
-      
-        <Card >
-        <Image src={this.props.mask.image}/>
-        <Card.Content>
-          <Card.Description>
+        <img className="Card-image" src={this.props.mask.image}/>
+        <div className="Card-content">
+          <p className="Card-description">
             {this.props.mask.comment}
-          </Card.Description>
-          <Card.Meta>
+            </p>
+        
+          <p className="Card-location">
             {this.props.mask.location}
-          </Card.Meta>
+            </p>
+            </div>
           {this.props.isLoggedIn ? <Button color='red' size='tiny' onClick={this.deleteCard} id={this.props.mask.id}> Delete </Button> : null}
-        </Card.Content>
-        </Card>
+        
+       
   
         
 

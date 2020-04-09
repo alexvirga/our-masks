@@ -90,6 +90,7 @@ class Upload extends Component {
               content="Choose File"
               labelPosition="left"
               icon="file"
+              type="button"
               onClick={() => this.fileInputRef.current.click()}
            
             />
@@ -116,9 +117,10 @@ class Upload extends Component {
             required
           /> */}
 
-<Dropdown
+<Form.Dropdown
         
         options={countryList}
+        label="Country"
         placeholder='Country'
         name="location"
         search
@@ -136,6 +138,7 @@ class Upload extends Component {
             name="comment"
             placeholder="Tell us about more."
             onChange={this.handleDescription}
+            maxLength="140"
           />
 
           <Button>Upload</Button>

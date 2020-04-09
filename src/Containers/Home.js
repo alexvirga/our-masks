@@ -52,7 +52,7 @@ class Home extends Component {
     return (
       <div className="home">
           <div className="HomeBackground">
-          <img src="https://static01.nyt.com/images/2020/03/17/fashion/17virus-masks-1/17virus-masks-1-superJumbo.jpg?quality=90&auto=webp" style={{width: "100%", height: "auto"}}alt="Italian Trulli"/> 
+          <img style={{width:"100vw"}} src="https://i.imgur.com/5wR6r7r.png"/> 
           </div>
         <div className="Home-header">
           <Navbar />
