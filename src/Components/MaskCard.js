@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-import { Card, Image, CardGroup} from "semantic-ui-react";
+import { Card, Image} from "semantic-ui-react";
 
 class MaskCard extends Component {
   render() {

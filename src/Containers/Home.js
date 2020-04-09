@@ -3,7 +3,6 @@ import Upload from "../Components/Upload";
 import MaskCard from "../Components/MaskCard";
 import Navbar from "../Components/Navbar";
 import { Button, Modal } from "semantic-ui-react";
-
 import { firestore } from "../firebase/firebase";
 
 class Home extends Component {
@@ -43,17 +42,18 @@ class Home extends Component {
   };
 
   render() {
+      
     return (
       <div className="home">
         <div className="Home-header">
           <Navbar />
           <Button onClick={this.showForm}>Share your Mask</Button>
-          {/* <Modal
+          <Modal
             open={this.state.modalOpen}
             onClose={this.showForm}
           >
             <Upload showForm={this.handleFormSubmit} />
-          </Modal> */}
+          </Modal>
         </div>
 
         {/* Loading ternary. Displays "loading" while data is being fetched */}
