@@ -101,7 +101,7 @@ class Upload extends Component {
             placeholder="Location"
             name="location"
             onChange={this.handleDescription}
-            maxlength="50"
+            maxLength="50"
             width={6}
             required
           />
