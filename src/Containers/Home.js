@@ -30,11 +30,18 @@ class Home extends Component {
       .collection("Masks")
       .orderBy("timestamp", "desc")
       .get()
-
       .catch((err) => console.log(err))
       .then((querySnapshot) => {
         //   console.log(querySnapshot.size)
-        const data = querySnapshot.docs.map((doc) => doc.data());
+
+        // const data = querySnapshot.docs.map(doc => doc.data())
+        const data = [];
+        querySnapshot.docs.forEach((doc) => {
+          const maskData = doc.data();
+          maskData.id = doc.id;
+          data.push(maskData);
+        });
+
         if (querySnapshot.size > 1) {
           this.setState({ data: data, isLoading: false });
         }
@@ -42,16 +49,12 @@ class Home extends Component {
   };
 
   render() {
-      
     return (
       <div className="home">
         <div className="Home-header">
           <Navbar />
           <Button onClick={this.showForm}>Share your Mask</Button>
-          <Modal
-            open={this.state.modalOpen}
-            onClose={this.showForm}
-          >
+          <Modal open={this.state.modalOpen} onClose={this.showForm}>
             <Upload showForm={this.handleFormSubmit} />
           </Modal>
         </div>
@@ -60,11 +63,14 @@ class Home extends Component {
         {this.state.isLoading ? (
           <h1> Loading... </h1>
         ) : (
-        
-
           <div className="Mask-Container">
             {this.state.data.map((item) => (
-              <MaskCard mask={item} key={item.image} />
+              <MaskCard
+                mask={item}
+                key={item.id}
+                isLoggedIn={this.props.isLoggedIn}
+                deleteCard={this.deleteCard}
+              />
             ))}
           </div>
         )}

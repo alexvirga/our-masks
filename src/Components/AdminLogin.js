@@ -2,8 +2,6 @@ import React, { Component } from "react";
 import { auth } from "../firebase/firebase";
 import Home from "../Containers/Home";
 
-
-
 class AdminLogin extends Component {
   state = {
     email: "",
@@ -34,7 +32,7 @@ class AdminLogin extends Component {
     auth
       .signOut()
       .then(() => {
-        console.log("logged out")
+        console.log("logged out");
       })
       .catch(function (error) {});
   };
@@ -42,12 +40,11 @@ class AdminLogin extends Component {
   render() {
     return (
       <div>
-          {this.props.isLoggedIn || this.state.isLoggedIn ? (
-        
-            <div>
-             <button onClick={this.signOutUser}> Sign Out </button>
-            
-          <Home isLoggedIn={true} />
+        {this.props.isLoggedIn || this.state.isLoggedIn ? (
+          <div>
+            <button onClick={this.signOutUser}> Sign Out </button>
+
+            <Home isLoggedIn={true} />
           </div>
         ) : (
           <div>
