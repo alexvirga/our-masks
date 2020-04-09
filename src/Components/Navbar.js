@@ -7,13 +7,13 @@ class Navbar extends Component {
     return (
       <div className="Header-message">
         <Header size="huge">Masks.us</Header>
-        <p>
+        <p style={{fontSize: "large"}}>
           The covid-19 pandemic has created an overwhelming demand for face
           masks, as millions of masks are needed to protect the doctors, nurses
           and other essential workers who are leading us through this crisis.
         </p>
         <br />
-        <p>
+        <p style={{fontSize: "large"}}>
           As a result, those without medical masks began crafting masks of their
           own. From old shirts, cloth totes, or whatever you may find in your
           home, each mask is unique.{" "}

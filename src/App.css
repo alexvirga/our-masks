@@ -11,7 +11,10 @@
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
   }
+
 }
+
+
 
 .App-header {
   background-color: #282c34;
@@ -25,31 +28,27 @@
 }
 
 .Home-header {
-  background-color: rgb(239, 247, 247);
+
   padding-bottom: 20px;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .Header-message{
-  padding: 40px
+    
+  padding: 40px;
+  max-width: 800px;
+  display: inline-flex;
+  flex-direction: column;
+  
+ 
 }
 .App-link {
   color: #61dafb;
 }
 
-.Mask-Container{
-  display: inline-flex;
-  width: 100vw;
-  flex-wrap: wrap;
-  justify-content: space-evenly;
-  align-items: flex-end;
-}
 
-.MaskCard{
-  margin: 20px;
-  height: fit-content;
-
-
-}
 
 .Upload-form-container {
   justify-content: center;
@@ -61,6 +60,8 @@
 
 }
 
+
+
 .Upload-form {
   display: flex;
     flex-direction: column;
@@ -69,7 +70,104 @@
 
 
 
+  
+  
+.Mask-Container{
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  justify-content: center;
 
+
+
+
+}
+
+.MaskCard{
+  background-color: white;
+  border-radius: 0.25rem;
+  box-shadow: 0 20px 40px -14px rgba(0,0,0,0.25);
+  display: block;
+  flex-direction: column;
+  overflow: hidden;
+  margin: 15px;
+  width: min-content;
+  height: min-content;
+}
+ 
+  
+
+.Card-description {
+  flex: 1 1 auto;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin-bottom: 1.25rem;
+  max-width: 300px;
+  min-width: 150px;
+  font-size: small;
+  overflow-wrap: anywhere;
+}
+
+.Card-location {
+  font-size: 1.25rem;
+  font-weight: 300;
+  letter-spacing: 2px;
+  color: "blue"
+
+
+  
+}
+
+.Card-content {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  padding: 1rem;
+  align-items: center;
+  width: fit-content;
+  flex: 1 1 auto;  
+  position: relative;
+  min-width: 1px;
+
+  margin: 0 auto;
+  z-index: 1;
+  
+}
+
+  .Card-image {
+  
+
+
+      border-top-left-radius: 0.25rem;
+      border-top-right-radius: 0.25rem;
+      overflow: hidden;
+      position: relative;
+      height: 340px
+      
+      
+  }
+  
+  .HomeBackground{
+    width:100vw;
+    height:auto
+  }
+
+
+
+ 
+
+
+
+
+  @media (max-width: 600px) {
+    .Card-image {
+      width: 90vw;
+      height: auto;
+    
+    }
+  }
 
 
 
