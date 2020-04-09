@@ -1,6 +1,9 @@
 import React, { Component } from "react";
 import { storage, firestore } from "../firebase/firebase";
-import { Form ,Button} from "semantic-ui-react";
+import { Form ,Button, Dropdown} from "semantic-ui-react";
+import countryList from "./CountryList"
+
+
 
 class Upload extends Component {
   state = {
@@ -22,7 +25,13 @@ class Upload extends Component {
   };
 
   handleDescription = (e) => {
+    console.log(e)
     this.setState({ [e.target.name]: e.target.value });
+  };
+
+  handleDropdown = (event, data) => {
+    console.log(data)
+    this.setState({ location: data.value });
   };
 
   postImageData = (url) => {
@@ -34,6 +43,7 @@ class Upload extends Component {
       timestamp: Date.now(),
     });
   };
+
 
   handleFireBaseUpload = (e) => {
     e.preventDefault();
@@ -95,7 +105,7 @@ class Upload extends Component {
           </Form.Field>
 
           <br />
-
+{/* 
           <Form.Input
             label="Location"
             placeholder="Location"
@@ -104,7 +114,19 @@ class Upload extends Component {
             maxLength="50"
             width={6}
             required
-          />
+          /> */}
+
+<Dropdown
+        
+        options={countryList}
+        placeholder='Country'
+        name="location"
+        search
+        onChange={this.handleDropdown}
+        width={6}
+        required
+        selection
+      />
 
 
 

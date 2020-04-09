@@ -51,9 +51,12 @@ class Home extends Component {
   render() {
     return (
       <div className="home">
+          <div className="HomeBackground">
+          <img src="https://static01.nyt.com/images/2020/03/17/fashion/17virus-masks-1/17virus-masks-1-superJumbo.jpg?quality=90&auto=webp" style={{width: "100%", height: "auto"}}alt="Italian Trulli"/> 
+          </div>
         <div className="Home-header">
           <Navbar />
-          <Button onClick={this.showForm}>Share your Mask</Button>
+          <Button size="medium" onClick={this.showForm}>Share your Mask</Button>
           <Modal open={this.state.modalOpen} onClose={this.showForm}>
             <Upload showForm={this.handleFormSubmit} />
           </Modal>
