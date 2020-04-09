@@ -1,14 +1,30 @@
 import React, { Component } from "react";
 
-import { Card, Image} from "semantic-ui-react";
+import { Card, Image, Button} from "semantic-ui-react";
+import { firestore } from "../firebase/firebase";
+
 
 class MaskCard extends Component {
+  state = {
+    display: "flex"
+  }
+
+deleteCard = (e) => {
+  firestore.collection("Masks").doc(e.target.id).delete().then(function() {
+    
+  }).catch(function(error) {
+      console.error("Error removing document: ", error);
+  });
+  this.setState({display: "none"});;
+};
+
   render() {
+    
     return (
-      <div className="MaskCard">
+      <div className="MaskCard" style={{display: this.state.display}}>
        
       
-        <Card>
+        <Card >
         <Image src={this.props.mask.image}/>
         <Card.Content>
           <Card.Description>
@@ -17,10 +33,7 @@ class MaskCard extends Component {
           <Card.Meta>
             {this.props.mask.location}
           </Card.Meta>
- 
-        {/* <Icon name='heart outline' color="red" /> */}
-        
-
+          {this.props.isLoggedIn ? <Button color='red' size='tiny' onClick={this.deleteCard} id={this.props.mask.id}> Delete </Button> : null}
         </Card.Content>
         </Card>
   
@@ -28,12 +41,6 @@ class MaskCard extends Component {
 
 
 
-          {/* <img
-            src={this.props.mask.image}
-            style={{ maxWidth: "200px", height: "auto" }}
-          />
-          <h3> {this.props.mask.location} </h3>
-          <p> {this.props.mask.comment} </p> */}
         
       </div>
     );
