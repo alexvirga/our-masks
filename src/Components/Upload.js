@@ -41,6 +41,7 @@ class Upload extends Component {
       comment: this.state.comment,
       location: this.state.location,
       timestamp: Date.now(),
+      approved: false,
     });
   };
 
@@ -87,7 +88,7 @@ class Upload extends Component {
 
         <Form.Field>
             <Button
-              content="Choose File"
+              content="Choose Photo"
               labelPosition="left"
               icon="file"
               type="button"

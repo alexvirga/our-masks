@@ -4,6 +4,7 @@ import MaskCard from "../Components/MaskCard";
 import Navbar from "../Components/Navbar";
 import { Button, Modal } from "semantic-ui-react";
 import { firestore } from "../firebase/firebase";
+import AdminCard from "../Components/AdminCard";
 
 class Home extends Component {
   state = {
@@ -28,7 +29,9 @@ class Home extends Component {
     this.setState({ isLoading: true });
     firestore
       .collection("Masks")
+    //   .where("approved", "==", true)
       .orderBy("timestamp", "desc")
+      
       .get()
       .catch((err) => console.log(err))
       .then((querySnapshot) => {
@@ -39,9 +42,10 @@ class Home extends Component {
         querySnapshot.docs.forEach((doc) => {
           const maskData = doc.data();
           maskData.id = doc.id;
+        //   if(maskData.approved === true){
           data.push(maskData);
+        // }
         });
-
         if (querySnapshot.size > 1) {
           this.setState({ data: data, isLoading: false });
         }
@@ -67,13 +71,21 @@ class Home extends Component {
           <h1> Loading... </h1>
         ) : (
           <div className="Mask-Container">
+              
             {this.state.data.map((item) => (
+                !this.props.isLoggedIn ? 
+                item.approved ? (
               <MaskCard
                 mask={item}
                 key={item.id}
                 isLoggedIn={this.props.isLoggedIn}
                 deleteCard={this.deleteCard}
-              />
+              /> ) : null :
+              <AdminCard
+              mask={item}
+              key={item.id}
+              isLoggedIn={this.props.isLoggedIn}
+              deleteCard={this.deleteCard} />
             ))}
           </div>
         )}

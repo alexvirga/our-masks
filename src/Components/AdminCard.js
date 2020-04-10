@@ -4,19 +4,30 @@ import { Card, Image, Button} from "semantic-ui-react";
 import { firestore } from "../firebase/firebase";
 
 
-class MaskCard extends Component {
+class AdminCard extends Component {
   state = {
-    display: "block"
+    display: "block",
+    displayApproved: "inline-block"
   }
 
-deleteCard = (e) => {
-  firestore.collection("Masks").doc(e.target.id).delete().then(function() {
+approveCard = (e) => {
+    
+  firestore.collection("Masks").doc(e.target.id).update({approved: true }).then(function() {
     
   }).catch(function(error) {
-      console.error("Error removing document: ", error);
+      console.error("Error updating document: ", error);
   });
-  this.setState({display: "none"});;
+  this.setState({displayApproved: "none"});;
 };
+
+deleteCard = (e) => {
+    firestore.collection("Masks").doc(e.target.id).delete().then(function() {
+      
+    }).catch(function(error) {
+        console.error("Error removing document: ", error);
+    });
+    this.setState({display: "none"});;
+  };
 
   render() {
     
@@ -33,7 +44,7 @@ deleteCard = (e) => {
             </p>
             </div>
           {this.props.isLoggedIn ? <Button color='red' size='tiny' onClick={this.deleteCard} id={this.props.mask.id}> Delete </Button> : null}
-          {!this.props.mask.approved ?  <Button> Approve </Button> : null }
+          {!this.props.mask.approved ?  <Button onClick={this.approveCard} id={this.props.mask.id} style={{display: this.state.displayApproved}}> Approve </Button> : null }
         
        
   
@@ -47,4 +58,4 @@ deleteCard = (e) => {
   }
 }
 
-export default MaskCard;
+export default AdminCard;

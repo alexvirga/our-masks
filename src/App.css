@@ -92,7 +92,7 @@
   display: block;
   flex-direction: column;
   overflow: hidden;
-  margin: 15px;
+  margin: 6px;
   width: min-content;
   height: min-content;
 }
