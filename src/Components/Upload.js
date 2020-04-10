@@ -1,9 +1,7 @@
 import React, { Component } from "react";
 import { storage, firestore } from "../firebase/firebase";
-import { Form ,Button, Dropdown} from "semantic-ui-react";
-import countryList from "./CountryList"
-
-
+import { Form, Button, Select } from "semantic-ui-react";
+import countryList from "./CountryList";
 
 class Upload extends Component {
   state = {
@@ -12,6 +10,11 @@ class Upload extends Component {
     imageAsUrl: "",
     location: "",
     comment: "",
+    uploadLoading: false,
+    uploadError: "",
+    locationError: false,
+    commentError: false,
+    imageError: false,
   };
 
   fileInputRef = React.createRef();
@@ -19,37 +22,91 @@ class Upload extends Component {
   handleImageAsFile = (e) => {
     if (e.target.files[0]) {
       const image = e.target.files[0];
-      const previewUrl = URL.createObjectURL(image);
-      this.setState({ imagePreview: previewUrl, imageAsFile: image });
+      if (image.size < 5242880) {
+        const previewUrl = URL.createObjectURL(image);
+        this.setState({
+          imagePreview: previewUrl,
+          imageAsFile: image,
+          uploadError: "",
+        });
+      } else {
+        this.setState({
+          uploadError:
+            "File size is too big. Please upload photos smaller than 5mb",
+        });
+      }
     } else this.setState({ imagePreview: "" });
   };
 
   handleDescription = (e) => {
-    console.log(e)
     this.setState({ [e.target.name]: e.target.value });
   };
 
   handleDropdown = (event, data) => {
-    console.log(data)
     this.setState({ location: data.value });
   };
 
   postImageData = (url) => {
-    this.props.showForm();
-    firestore.collection("Masks").add({
-      image: url,
-      comment: this.state.comment,
-      location: this.state.location,
-      timestamp: Date.now(),
-      approved: false,
-    });
+    firestore
+      .collection("Masks")
+      .add({
+        image: url,
+        comment: this.state.comment,
+        location: this.state.location,
+        timestamp: Date.now(),
+        approved: false,
+        uploadComplete: false,
+      })
+      .then((ref) => {
+        this.setState({ uploadLoading: false, uploadComplete: true });
+      });
   };
 
 
-  handleFireBaseUpload = (e) => {
+// Custom Form Validation 
+
+  validateForm = (e) => {
     e.preventDefault();
+    this.validateLocation();
+    this.validateComment();
+    this.validateImage();
+    if (
+      this.validateComment() &&
+      this.validateLocation() &&
+      this.validateImage()
+    ) {
+      this.handleFireBaseUpload();
+    }
+  };
+
+  validateLocation = () => {
+    if (!this.state.location) {
+      this.setState({ locationError: true });
+      return false;
+    } else this.setState({ locationError: false });
+    return true;
+  };
+
+  validateComment = () => {
+    if (!this.state.comment) {
+      this.setState({ commentError: true });
+      return false;
+    } else this.setState({ commentError: false });
+    return true;
+  };
+
+  validateImage = () => {
+    if (!this.state.imageAsFile) {
+      this.setState({ imageError: true });
+      return false;
+    } else this.setState({ imageError: false });
+    return true;
+  };
+
+
+  handleFireBaseUpload = () => {
+    this.setState({ uploadLoading: true });
     if (this.state.imageAsFile === "") {
-      console.error(`Please upload a valid photo`);
     }
     const uploadTask = storage
       .ref(`/images/${this.state.imageAsFile.name}`)
@@ -58,11 +115,11 @@ class Upload extends Component {
     uploadTask.on(
       "state_changed",
       (snapShot) => {
-        console.log(snapShot);
+
       },
       (err) => {
         //catches the errors
-        console.log(err);
+        console.log(this.setState({uploadError: "Error uploading photo"}), err);
       },
       () => {
         // gets the functions from storage refences the image storage in firebase by the children
@@ -84,73 +141,90 @@ class Upload extends Component {
   render() {
     return (
       <div className="Upload-form-div">
-        <Form className="Upload-form" onSubmit={this.handleFireBaseUpload}>
+        {this.state.uploadComplete ? (
+          <div>
+            <h1> Your photo has been submitted for review </h1>
+            <Button onClick={this.props.showForm}> View Masks </Button>
+          </div>
+        ) : this.state.uploadLoading ? (
+          <h1> Uploading...</h1>
+        ) : (
+          <Form className="Upload-form" onSubmit={this.validateForm}>
+            <Form.Field>
+              <Button
+                content="Choose Photo"
+                labelPosition="left"
+                icon="file"
+                type="button"
+                onClick={() => this.fileInputRef.current.click()}
+              />
+              <input
+                ref={this.fileInputRef}
+                name="image"
+                accept="image/*"
+                type="file"
+                hidden
+                onChange={this.handleImageAsFile}
+              />
+            </Form.Field>
 
-        <Form.Field>
-            <Button
-              content="Choose Photo"
-              labelPosition="left"
-              icon="file"
-              type="button"
-              onClick={() => this.fileInputRef.current.click()}
-           
-            />
-            <input
-              ref={this.fileInputRef}
-              name="image"
-              accept="image/*"
-              type="file"
-              hidden
-              onChange={this.handleImageAsFile}
+            <br />
+
+            <Form.Field
+              control={Select}
               required
+              options={countryList}
+              label="Country"
+              placeholder="Country"
+              name="location"
+              search
+              onChange={this.handleDropdown}
+              width={6}
             />
-          </Form.Field>
 
-          <br />
-{/* 
-          <Form.Input
-            label="Location"
-            placeholder="Location"
-            name="location"
-            onChange={this.handleDescription}
-            maxLength="50"
-            width={6}
-            required
-          /> */}
+            <br />
+            <Form.TextArea
+              label="Comment"
+              name="comment"
+              placeholder="Tell us more."
+              onChange={this.handleDescription}
+              maxLength="140"
+              style={{ marginBotton: "0px" }}
+            />
 
-<Form.Dropdown
+            <Button stype="submit">Upload</Button>
+            <br />
+            {this.state.commentError ? (
+              <p className="Upload-error-message"> Please enter a Comment</p>
+            ) : null}
+            {this.state.locationError ? (
+              <p className="Upload-error-message"> Please select a location </p>
+            ) : null}
+            {this.state.imageError ? (
+              <p className="Upload-error-message"> Please upload a photo </p>
+            ) : null}
+
+            <div className="Upload-Preview">
+              {this.state.uploadError ? (
+                <h3 style={{ color: "red" }}>{this.state.uploadError}</h3>
+              ) : (
+                <img
+                  src={this.state.imagePreview}
+                  style={{
+                    width: "350px",
+                    maxWidth: "100%",
+                    maxHeight: "auto",
+                  }}
+                  alt=""
+                />
+              )}
+            </div>
+           
+          </Form>
+        )
         
-        options={countryList}
-        label="Country"
-        placeholder='Country'
-        name="location"
-        search
-        onChange={this.handleDropdown}
-        width={6}
-        required
-        selection
-      />
+        }
 
-
-
-          <br />
-          <Form.TextArea
-            label="Comment"
-            name="comment"
-            placeholder="Tell us about more."
-            onChange={this.handleDescription}
-            maxLength="140"
-          />
-
-          <Button>Upload</Button>
-        </Form>
-        <div className="Upload-Preview">
-          <img
-            src={this.state.imagePreview}
-            style={{ maxWidth: "200px", height: "auto" }}
-            alt=""
-          />
-        </div>
       </div>
     );
   }
