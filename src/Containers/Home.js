@@ -29,7 +29,6 @@ class Home extends Component {
     this.setState({ isLoading: true });
     firestore
       .collection("Masks")
-    //   .where("approved", "==", true)
       .orderBy("timestamp", "desc")
       
       .get()
@@ -56,7 +55,7 @@ class Home extends Component {
     return (
       <div className="home">
           <div className="HomeBackground">
-          <img style={{width:"100vw"}} src="https://i.imgur.com/5wR6r7r.png"/> 
+          <img style={{width:"100vw"}} src="https://i.imgur.com/5wR6r7r.png" alt=""/> 
           </div>
         <div className="Home-header">
           <Navbar />
@@ -73,18 +72,16 @@ class Home extends Component {
           <div className="Mask-Container">
               
             {this.state.data.map((item) => (
-                !this.props.isLoggedIn ? 
+                !this.props.isLoggedInAdmin ? 
                 item.approved ? (
               <MaskCard
                 mask={item}
                 key={item.id}
-                isLoggedIn={this.props.isLoggedIn}
-                deleteCard={this.deleteCard}
               /> ) : null :
               <AdminCard
               mask={item}
               key={item.id}
-              isLoggedIn={this.props.isLoggedIn}
+              isLoggedInAdmin={this.props.isLoggedInAdmin}
               deleteCard={this.deleteCard} />
             ))}
           </div>

@@ -6,7 +6,7 @@ class Navbar extends Component {
   render() {
     return (
       <div className="Header-message">
-        <Header size="huge">Masks.us</Header>
+        <Header size="huge">ourmask.org</Header>
         <p style={{fontSize: "large"}}>
           The covid-19 pandemic has created an overwhelming demand for face
           masks, as millions of masks are needed to protect the doctors, nurses

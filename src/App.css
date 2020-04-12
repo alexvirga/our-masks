@@ -68,6 +68,15 @@
     text-align: left;
 }
 
+.ui.form>.Upload-error-message {
+  margin: 0px;
+  color: red}
+
+.Upload-Preview {
+  align-self: center;
+  margin: 20px
+}
+
 
 
   
@@ -84,6 +93,7 @@
 
 
 }
+
 
 .MaskCard{
   background-color: white;

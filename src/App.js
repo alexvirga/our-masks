@@ -7,15 +7,21 @@ import { auth } from "./firebase/firebase";
 
 class App extends Component {
   state = {
-    isLoggedIn: null,
+    isLoggedInAdmin: null,
+    isLoggedInAnon: null
   };
 
-  componentWillMount() {
+  componentDidMount() {
     this.unregisterAuthObserver = auth.onAuthStateChanged((user) => {
-      if (user) {
-        this.setState({ isLoggedIn: true}); // User signed in
-      } else {
-        this.setState({ isLoggedIn: false}); // User NOT signed in.
+      if (user === null) {
+        auth.signInAnonymously()
+        this.setState({isLoggedInAnon: true})
+      }
+      else if  (!user.isAnonymous) {
+        this.setState({isLoggedInAdmin: true})}
+
+      else if (user.isAnonymous) {
+        this.setState({ isLoggedInAnon: true}); // User signed in
       }
     });
   }
@@ -25,13 +31,13 @@ class App extends Component {
   }
 
   render() {
-    console.log(this.state.isLoggedIn);
+
     return (
       <Router>
         <div className="App">
           <Switch>
             <Route path="/admin-dashboard">
-              <AdminLogin isLoggedIn={this.state.isLoggedIn} />
+              <AdminLogin isLoggedInAdmin={this.state.isLoggedInAdmin} />
             </Route>
             <Route path="/*">
               <Home />
