@@ -2,41 +2,70 @@ import React, { Component } from "react";
 import { storage, firestore } from "../firebase/firebase";
 import { Form, Button, Select } from "semantic-ui-react";
 import countryList from "./CountryList";
+import Resizer from "react-image-file-resizer";
 
 class Upload extends Component {
   state = {
     imagePreview: "",
     imageAsFile: "",
+    imageName: "",
     imageAsUrl: "",
     location: "",
     comment: "",
-    uploadLoading: false,
     uploadError: "",
     locationError: false,
     commentError: false,
     imageError: false,
+    uploadComplete: false,
   };
 
   fileInputRef = React.createRef();
 
-  handleImageAsFile = (e) => {
+  handleFileChange = (e) => {
     if (e.target.files[0]) {
       const image = e.target.files[0];
-      if (image.size < 5242880) {
-        const previewUrl = URL.createObjectURL(image);
-        this.setState({
-          imagePreview: previewUrl,
-          imageAsFile: image,
-          uploadError: "",
-        });
-      } else {
-        this.setState({
-          uploadError:
-            "File size is too big. Please upload photos smaller than 5mb",
-        });
-      }
-    } else this.setState({ imagePreview: "" });
+      Resizer.imageFileResizer(
+        image, //is the file of the new image that can now be uploaded...
+        600, // is the maxWidth of the  new image
+        340, // is the maxHeight of the  new image
+        "JPEG", // is the compressFormat of the  new image
+        100, // is the quality of the  new image
+        0, // is the rotatoion of the  new image
+        (uri) => {
+          const previewUrl = URL.createObjectURL(uri);
+          this.setState({
+            imagePreview: previewUrl,
+            imageAsFile: uri,
+            imageName: `${image.name}_${Date.now()} `,
+            uploadError: "",
+          });
+          
+        }, // is the callBack function of the new image URI
+        "blob" // is the output type of the new image
+      );
+    }
+    else this.setState({ imagePreview: "" });
   };
+
+  // handleImageAsFile = (e) => {
+  //   if (e.target.files[0]) {
+  //     const image = e.target.files[0];
+
+  //     if (image.size < 5242880) {
+  //       const previewUrl = URL.createObjectURL(image);
+  //       this.setState({
+  //         imagePreview: previewUrl,
+  //         imageAsFile: image,
+  //         uploadError: "",
+  //       });
+  //     } else {
+  //       this.setState({
+  //         uploadError:
+  //           "File size is too big. Please upload photos smaller than 5mb",
+  //       });
+  //     }
+  //   } else this.setState({ imagePreview: "" });
+  // };
 
   handleDescription = (e) => {
     this.setState({ [e.target.name]: e.target.value });
@@ -55,15 +84,11 @@ class Upload extends Component {
         location: this.state.location,
         timestamp: Date.now(),
         approved: false,
-        uploadComplete: false,
       })
-      .then((ref) => {
-        this.setState({ uploadLoading: false, uploadComplete: true });
-      });
+      .then((ref) => {});
   };
 
-
-// Custom Form Validation 
+  // Custom Form Validation
 
   validateForm = (e) => {
     e.preventDefault();
@@ -103,30 +128,30 @@ class Upload extends Component {
     return true;
   };
 
-
   handleFireBaseUpload = () => {
-    this.setState({ uploadLoading: true });
-    if (this.state.imageAsFile === "") {
-    }
+    this.setState({ uploadComplete: true });
+
     const uploadTask = storage
-      .ref(`/images/${this.state.imageAsFile.name}`)
+      .ref(`/images/${this.state.imageName}`)
       .put(this.state.imageAsFile);
     //initiates the firebase side uploading
     uploadTask.on(
       "state_changed",
-      (snapShot) => {
-
-      },
+      (snapShot) => {},
       (err) => {
         //catches the errors
-        console.log(this.setState({uploadError: "Error uploading photo"}), err);
+        console.log(
+          this.setState({ uploadError: "Error uploading photo" }),
+          err
+        );
       },
       () => {
         // gets the functions from storage refences the image storage in firebase by the children
         // gets the download url then sets the image from firebase as the value for the imgUrl key:
+
         storage
           .ref("images")
-          .child(this.state.imageAsFile.name)
+          .child(this.state.imageName)
           .getDownloadURL()
           .then((fireBaseUrl) => {
             this.postImageData(fireBaseUrl);
@@ -146,8 +171,6 @@ class Upload extends Component {
             <h1> Your photo has been submitted for review </h1>
             <Button onClick={this.props.showForm}> View Masks </Button>
           </div>
-        ) : this.state.uploadLoading ? (
-          <h1> Uploading...</h1>
         ) : (
           <Form className="Upload-form" onSubmit={this.validateForm}>
             <Form.Field>
@@ -164,7 +187,7 @@ class Upload extends Component {
                 accept="image/*"
                 type="file"
                 hidden
-                onChange={this.handleImageAsFile}
+                onChange={this.handleFileChange}
               />
             </Form.Field>
 
@@ -219,12 +242,8 @@ class Upload extends Component {
                 />
               )}
             </div>
-           
           </Form>
-        )
-        
-        }
-
+        )}
       </div>
     );
   }

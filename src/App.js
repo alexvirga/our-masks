@@ -13,13 +13,12 @@ class App extends Component {
 
   componentDidMount() {
     this.unregisterAuthObserver = auth.onAuthStateChanged((user) => {
-      console.log(user)
       if (user === null) {
         auth.signInAnonymously()
         this.setState({isLoggedInAnon: true})
       }
       else if  (!user.isAnonymous) {
-        this.setState({isLoggedIn: true})}
+        this.setState({isLoggedInAdmin: true})}
 
       else if (user.isAnonymous) {
         this.setState({ isLoggedInAnon: true}); // User signed in
@@ -38,7 +37,7 @@ class App extends Component {
         <div className="App">
           <Switch>
             <Route path="/admin-dashboard">
-              <AdminLogin isLoggedIn={this.state.isLoggedIn} />
+              <AdminLogin isLoggedInAdmin={this.state.isLoggedInAdmin} />
             </Route>
             <Route path="/*">
               <Home />

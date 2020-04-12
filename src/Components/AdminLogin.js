@@ -6,7 +6,7 @@ class AdminLogin extends Component {
   state = {
     email: "",
     password: "",
-    isLoggedIn: false,
+    isLoggedInAdmin: false,
     errors: "",
   };
 
@@ -15,7 +15,7 @@ class AdminLogin extends Component {
     auth
       .signInWithEmailAndPassword(this.state.email, this.state.password)
       .then((res) => {
-        if (res.user) this.setState({ isLoggedIn: true, errors: "" });
+        if (res.user) this.setState({ isLoggedInAdmin: true, errors: "" });
         console.log("logged in");
       })
       .catch((e) => {
@@ -40,11 +40,11 @@ class AdminLogin extends Component {
   render() {
     return (
       <div>
-        {this.props.isLoggedIn || this.state.isLoggedIn ? (
+        {this.props.isLoggedInAdmin || this.state.isLoggedInAdmin ? (
           <div>
             <button onClick={this.signOutUser}> Sign Out </button>
 
-            <Home isLoggedIn={true} />
+            <Home isLoggedInAdmin={true} />
           </div>
         ) : (
           <div>
