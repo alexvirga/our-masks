@@ -5,12 +5,17 @@ import Navbar from "../Components/Navbar";
 import { Button, Modal } from "semantic-ui-react";
 import { firestore } from "../firebase/firebase";
 import AdminCard from "../Components/AdminCard";
+import InfiniteScroll from "react-infinite-scroll-component";
+import maskcollage from "../maskcollage.png";
 
 class Home extends Component {
   state = {
     data: [],
     isLoading: true,
     modalOpen: false,
+    newItems: [],
+    loadCount: 20,
+    scrollLoading: false,
   };
   componentDidMount = () => {
     this.getMasks();
@@ -18,7 +23,15 @@ class Home extends Component {
 
   handleFormSubmit = () => {
     this.showForm();
-    this.getMasks();
+  };
+
+  loadMoreData = () => {
+    let newArr = this.state.data.slice(0, this.state.loadCount);
+    console.log(newArr);
+    this.setState({
+      newItems: newArr,
+      loadCount: (this.state.loadCount += 20),
+    });
   };
 
   showForm = () => {
@@ -30,7 +43,7 @@ class Home extends Component {
     firestore
       .collection("Masks")
       .orderBy("timestamp", "desc")
-      
+
       .get()
       .catch((err) => console.log(err))
       .then((querySnapshot) => {
@@ -41,12 +54,20 @@ class Home extends Component {
         querySnapshot.docs.forEach((doc) => {
           const maskData = doc.data();
           maskData.id = doc.id;
-        //   if(maskData.approved === true){
+          //   if(maskData.approved === true){
           data.push(maskData);
-        // }
+          // }
         });
         if (querySnapshot.size > 1) {
-          this.setState({ data: data, isLoading: false });
+          let newArr = data.slice(0, this.state.loadCount);
+          console.log(newArr);
+          console.log(data);
+          this.setState({
+            data: data,
+            isLoading: false,
+            newItems: newArr,
+            loadCount: (this.state.loadCount += 20),
+          });
         }
       });
   };
@@ -54,12 +75,14 @@ class Home extends Component {
   render() {
     return (
       <div className="home">
-          <div className="HomeBackground">
-          <img style={{width:"100vw"}} src="https://i.imgur.com/5wR6r7r.png" alt=""/> 
-          </div>
+        <div className="HomeBackground">
+          <img style={{ width: "100vw" }} src={maskcollage} alt="" />
+        </div>
         <div className="Home-header">
           <Navbar />
-          <Button size="medium" onClick={this.showForm}>Share your Mask</Button>
+          <Button size="medium" onClick={this.showForm}>
+            Share your Mask
+          </Button>
           <Modal open={this.state.modalOpen} onClose={this.showForm}>
             <Upload showForm={this.handleFormSubmit} />
           </Modal>
@@ -69,22 +92,31 @@ class Home extends Component {
         {this.state.isLoading ? (
           <h1> Loading... </h1>
         ) : (
-          <div className="Mask-Container">
-              
-            {this.state.data.map((item) => (
-                !this.props.isLoggedInAdmin ? 
+          // <div className="Mask-Container">
+
+          <InfiniteScroll
+            className="Mask-Container"
+            dataLength={this.state.newItems.length} //This is important field to render the next data
+            next={this.loadMoreData}
+            hasMore={true}
+            // loader={<div style={{width: "100%"}}><h4>Loading...</h4> </div>}
+          >
+            {this.state.newItems.map((item) =>
+              !this.props.isLoggedInAdmin ? (
                 item.approved ? (
-              <MaskCard
-                mask={item}
-                key={item.id}
-              /> ) : null :
-              <AdminCard
-              mask={item}
-              key={item.id}
-              isLoggedInAdmin={this.props.isLoggedInAdmin}
-              deleteCard={this.deleteCard} />
-            ))}
-          </div>
+                  <MaskCard mask={item} key={item.id} />
+                ) : null
+              ) : (
+                <AdminCard
+                  mask={item}
+                  key={item.id}
+                  isLoggedInAdmin={this.props.isLoggedInAdmin}
+                  deleteCard={this.deleteCard}
+                />
+              )
+            )}
+          </InfiniteScroll>
+          // </div>
         )}
       </div>
     );
