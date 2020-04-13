@@ -29,7 +29,7 @@ class Upload extends Component {
         600, // is the maxWidth of the  new image
         340, // is the maxHeight of the  new image
         "JPEG", // is the compressFormat of the  new image
-        100, // is the quality of the  new image
+        95, // is the quality of the  new image
         0, // is the rotatoion of the  new image
         (uri) => {
           const previewUrl = URL.createObjectURL(uri);
@@ -39,33 +39,11 @@ class Upload extends Component {
             imageName: `${image.name}_${Date.now()} `,
             uploadError: "",
           });
-          
-        }, // is the callBack function of the new image URI
+        },
         "blob" // is the output type of the new image
       );
-    }
-    else this.setState({ imagePreview: "" });
+    } else this.setState({ imagePreview: "" });
   };
-
-  // handleImageAsFile = (e) => {
-  //   if (e.target.files[0]) {
-  //     const image = e.target.files[0];
-
-  //     if (image.size < 5242880) {
-  //       const previewUrl = URL.createObjectURL(image);
-  //       this.setState({
-  //         imagePreview: previewUrl,
-  //         imageAsFile: image,
-  //         uploadError: "",
-  //       });
-  //     } else {
-  //       this.setState({
-  //         uploadError:
-  //           "File size is too big. Please upload photos smaller than 5mb",
-  //       });
-  //     }
-  //   } else this.setState({ imagePreview: "" });
-  // };
 
   handleDescription = (e) => {
     this.setState({ [e.target.name]: e.target.value });
@@ -130,7 +108,6 @@ class Upload extends Component {
 
   handleFireBaseUpload = () => {
     this.setState({ uploadComplete: true });
-
     const uploadTask = storage
       .ref(`/images/${this.state.imageName}`)
       .put(this.state.imageAsFile);
