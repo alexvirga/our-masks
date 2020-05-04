@@ -1,8 +1,10 @@
-import React, { Component } from "react";
+import React, { Component, useCallback } from "react";
 import { storage, firestore } from "../firebase/firebase";
 import { Form, Button, Select } from "semantic-ui-react";
 import countryList from "./CountryList";
 import Resizer from "react-image-file-resizer";
+
+import ImageUploader from "../Containers/ImageUploader";
 
 class Upload extends Component {
   state = {
@@ -17,32 +19,16 @@ class Upload extends Component {
     commentError: false,
     imageError: false,
     uploadComplete: false,
+    isLoading: false,
+    image: "",
   };
 
   fileInputRef = React.createRef();
 
-  handleFileChange = (e) => {
-    if (e.target.files[0]) {
-      const image = e.target.files[0];
-      Resizer.imageFileResizer(
-        image, //is the file of the new image that can now be uploaded...
-        600, // is the maxWidth of the  new image
-        340, // is the maxHeight of the  new image
-        "JPEG", // is the compressFormat of the  new image
-        95, // is the quality of the  new image
-        0, // is the rotatoion of the  new image
-        (uri) => {
-          const previewUrl = URL.createObjectURL(uri);
-          this.setState({
-            imagePreview: previewUrl,
-            imageAsFile: uri,
-            imageName: `${image.name}_${Date.now()} `,
-            uploadError: "",
-          });
-        },
-        "blob" // is the output type of the new image
-      );
-    } else this.setState({ imagePreview: "" });
+  handleUploadChange = (fileItem) => {
+    if (fileItem) {
+      this.setState({ image: fileItem, imageAsFile: fileItem });
+    }
   };
 
   handleDescription = (e) => {
@@ -106,38 +92,28 @@ class Upload extends Component {
     return true;
   };
 
-  handleFireBaseUpload = () => {
+  handleFireBaseUpload = async () => {
     this.setState({ uploadComplete: true });
-    const uploadTask = storage
-      .ref(`/images/${this.state.imageName}`)
-      .put(this.state.imageAsFile);
-    //initiates the firebase side uploading
-    uploadTask.on(
-      "state_changed",
-      (snapShot) => {},
-      (err) => {
-        //catches the errors
-        console.log(
-          this.setState({ uploadError: "Error uploading photo" }),
-          err
-        );
-      },
-      () => {
-        // gets the functions from storage refences the image storage in firebase by the children
-        // gets the download url then sets the image from firebase as the value for the imgUrl key:
-
-        storage
-          .ref("images")
-          .child(this.state.imageName)
-          .getDownloadURL()
-          .then((fireBaseUrl) => {
-            this.postImageData(fireBaseUrl);
-            this.setState({
-              imageAsUrl: fireBaseUrl,
-            });
-          });
+    const data = new FormData();
+    const image = this.state.image;
+    data.append("file", image);
+    data.append("upload_preset", "ourmasks");
+    this.setState({ isLoading: true });
+    const res = await fetch(
+      "https://api.cloudinary.com/v1_1/alexvirga/image/upload",
+      {
+        method: "POST",
+        body: data,
       }
     );
+    const file = await res.json();
+    this.setState({
+      imageAsFile: file,
+      isLoading: false,
+      imagePreview: file.secure_url,
+      imageName: file.asset_id,
+    });
+    this.postImageData(file.secure_url);
   };
 
   render() {
@@ -150,26 +126,9 @@ class Upload extends Component {
           </div>
         ) : (
           <Form className="Upload-form" onSubmit={this.validateForm}>
-            <Form.Field>
-              <Button
-                content="Choose Photo"
-                labelPosition="left"
-                icon="file"
-                type="button"
-                onClick={() => this.fileInputRef.current.click()}
-              />
-              <input
-                ref={this.fileInputRef}
-                name="image"
-                accept="image/*"
-                type="file"
-                hidden
-                onChange={this.handleFileChange}
-              />
-            </Form.Field>
+            <ImageUploader handleUploadChange={this.handleUploadChange} />
 
             <br />
-
             <Form.Field
               control={Select}
               required

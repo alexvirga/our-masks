@@ -14,7 +14,7 @@ class Home extends Component {
     isLoading: true,
     modalOpen: false,
     newItems: [],
-    loadCount: 20,
+    loadCount: 15,
     scrollLoading: false,
   };
   componentDidMount = () => {
@@ -27,7 +27,6 @@ class Home extends Component {
 
   loadMoreData = () => {
     let newArr = this.state.data.slice(0, this.state.loadCount);
-    console.log(newArr);
     this.setState({
       newItems: newArr,
       loadCount: (this.state.loadCount += 20),
@@ -43,25 +42,17 @@ class Home extends Component {
     firestore
       .collection("Masks")
       .orderBy("timestamp", "desc")
-
       .get()
       .catch((err) => console.log(err))
       .then((querySnapshot) => {
-        //   console.log(querySnapshot.size)
-
-        // const data = querySnapshot.docs.map(doc => doc.data())
         const data = [];
         querySnapshot.docs.forEach((doc) => {
           const maskData = doc.data();
           maskData.id = doc.id;
-          //   if(maskData.approved === true){
           data.push(maskData);
-          // }
         });
         if (querySnapshot.size > 1) {
           let newArr = data.slice(0, this.state.loadCount);
-          console.log(newArr);
-          console.log(data);
           this.setState({
             data: data,
             isLoading: false,
@@ -92,14 +83,11 @@ class Home extends Component {
         {this.state.isLoading ? (
           <h1> Loading... </h1>
         ) : (
-          // <div className="Mask-Container">
-
           <InfiniteScroll
             className="Mask-Container"
             dataLength={this.state.newItems.length} //This is important field to render the next data
             next={this.loadMoreData}
             hasMore={true}
-            // loader={<div style={{width: "100%"}}><h4>Loading...</h4> </div>}
           >
             {this.state.newItems.map((item) =>
               !this.props.isLoggedInAdmin ? (
@@ -116,7 +104,6 @@ class Home extends Component {
               )
             )}
           </InfiniteScroll>
-          // </div>
         )}
       </div>
     );
