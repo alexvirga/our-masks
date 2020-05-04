@@ -7,6 +7,7 @@ import { firestore } from "../firebase/firebase";
 import AdminCard from "../Components/AdminCard";
 import InfiniteScroll from "react-infinite-scroll-component";
 import maskcollage from "../maskcollage.png";
+import ImageUploader from "./ImageUploader"
 
 class Home extends Component {
   state = {
@@ -27,7 +28,7 @@ class Home extends Component {
 
   loadMoreData = () => {
     let newArr = this.state.data.slice(0, this.state.loadCount);
-    console.log(newArr);
+    // console.log(newArr);
     this.setState({
       newItems: newArr,
       loadCount: (this.state.loadCount += 20),
@@ -60,8 +61,8 @@ class Home extends Component {
         });
         if (querySnapshot.size > 1) {
           let newArr = data.slice(0, this.state.loadCount);
-          console.log(newArr);
-          console.log(data);
+          // console.log(newArr);
+          // console.log(data);
           this.setState({
             data: data,
             isLoading: false,
@@ -75,6 +76,7 @@ class Home extends Component {
   render() {
     return (
       <div className="home">
+       
         <div className="HomeBackground">
           <img style={{ width: "100vw" }} src={maskcollage} alt="" />
         </div>

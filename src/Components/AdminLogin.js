@@ -16,11 +16,11 @@ class AdminLogin extends Component {
       .signInWithEmailAndPassword(this.state.email, this.state.password)
       .then((res) => {
         if (res.user) this.setState({ isLoggedInAdmin: true, errors: "" });
-        console.log("logged in");
+        // console.log("logged in");
       })
       .catch((e) => {
         this.setState({ errors: e.message });
-        console.log("not logged in");
+        // console.log("not logged in");
       });
   };
 
@@ -32,7 +32,7 @@ class AdminLogin extends Component {
     auth
       .signOut()
       .then(() => {
-        console.log("logged out");
+        // console.log("logged out");
       })
       .catch(function (error) {});
   };
